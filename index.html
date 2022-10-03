@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 동아리</title>
+	<link rel="shortcut icon" href="../images/favicon_dit.png" type="image/x-icon"/>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <style>
+
+        .embed-container { position:relative; padding-bottom:56.25%; height:0; overflow:hidden;  margin: 2rem; text-align:center}
+        .embed-container iframe,
+        .embed-container object,
+        .embed-container embed { position:absolute; top:0; left:0; width:100%; height:100%; }
+
+        body{
+            margin: 0;
+        }
+        .header{
+            height: 4rem;
+        }
+        #content{
+            width: 100vw;
+            height: 100vh;
+            background-image: url('img/index.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+        }
+        #info-btn{
+            width: 10rem;
+            margin: 0 auto;
+            margin-top: 2rem;
+        }
+        #content>h1{
+            display: inline-block;
+            text-align: center;
+            margin-top: 6rem;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+        }
+        #content>a{
+            text-decoration: none;
+        }
+        #info img{
+            margin-top: 5rem;
+        }
+        #info-content{
+            margin: 1rem 2rem;
+        }
+        #info-content img{
+            margin: 0;
+            width: 100%;
+        }
+
+
+        .imgBox{
+            width: 100vw;
+            overflow:auto;
+            display: inline-block;
+            margin-top: 0;
+        }
+        .img {
+            position: absolute;
+            width:100vw;
+            -webkit-transition: opacity 1s ease-in-out;
+            -moz-transition: opacity 1s ease-in-out;
+            -o-transition: opacity 1s ease-in-out;
+            transition: opacity 1s ease-in-out;
+            opacity: 0;
+            -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+            filter: alpha(opacity=0);
+        }
+
+        .img:first-child {
+            /* display: block; */
+            opacity: 1;
+        }
+        
+        #wrap {
+            padding: 20px;
+        }
+        
+        div {
+            margin: 5px 0px
+        }
+        .move-btn{
+            top: 0;
+            position: absolute;
+            margin-bottom: 90vh;
+            height: 90vh;
+            width: 3rem;
+            z-index: 1;
+            border: 0;
+        }
+        #indexBtn{
+            text-align: center;
+        }
+        .index-radio{
+            vertical-align: middle;
+            height: 100%;
+            width: 2rem;
+        }
+    </style>
+    <script>
+        function imgResize(){
+            let h = $(".imgBox").find(".on").height();
+            $(".imgBox").height(h);
+            $(".move-btn").height(h);
+        }
+
+        function indexBtn(index){
+            index--;
+            let indexLen = $('.index-radio').length;
+            if(index == 1){
+            }
+            $('.index-radio').eq(index).prop('checked', true);
+            nowIndex = $('#indexBtn').find('.index-radio:checked').index();
+        }
+        function prev () {
+
+            // 이미지 현재의 위치
+            var imgOn = $(".imgBox").find(".on").index();
+            // 이미지 총 개수 
+            var imgLen = $(".imgBox .img").length;
+            
+            // imgBox안의 img 중 imgOn 번째의 on 클래스 삭제 
+            $(".imgBox .img").eq(imgOn).removeClass("on");
+            // imgBox안의 img 중 imgOn 번째 숨기기 
+            $(".imgBox .img").eq(imgOn).css("opacity", 0);
+            
+            //  이전의 위치로 돌아가야함으로
+            imgOn = imgOn -1;
+
+            if( imgOn < 0 ){
+            // 돌아가 위치가 -1일 경우 
+            // 이미지의 마지막으로 돌아간다
+            $(".imgBox .img").eq(imgLen -1).css("opacity", 1);
+            $(".imgBox .img").eq(imgLen -1).addClass("on");
+            }else{
+            // 돌아갈 위치가 -1이 아닌 경우
+            $(".imgBox .img").eq(imgOn).css("opacity", 1);
+            $(".imgBox .img").eq(imgOn).addClass("on");
+            }
+            imgResize();
+            // console.log(imgOn)
+            indexBtn(imgOn);
+        }
+
+        function next() {
+            // 위에 동일 
+            var imgOn = $(".imgBox").find(".on").index();
+            var imgLen = $(".imgBox .img").length;
+
+            // 위에 동일
+            $(".imgBox .img").eq(imgOn).removeClass("on");
+            $(".imgBox .img").eq(imgOn).css("opacity", 0);
+            
+            // 다음의 위치로 알아야 되기 때문에 
+            imgOn = imgOn + 1;
+            
+            if( imgOn === imgLen ){
+                // 다음의 위치가 총 개수보다 클 경우
+                // 처음의 위치로 돌아간다
+                $(".imgBox .img").eq(0).css("opacity", 1);
+                $(".imgBox .img").eq(0).addClass("on");
+            }else{
+            // 다음 위치가 있는 경우 
+                $(".imgBox .img").eq(imgOn).css("opacity", 1);
+                $(".imgBox .img").eq(imgOn).addClass("on");
+            }
+            imgResize();
+            // console.log(imgOn)
+            indexBtn(imgOn);
+        }
+        $(window).resize(imgResize)
+        $(window).ready(function(){
+
+            prev();
+            function start(){
+                setInterval(function () { next()}, 2000);
+            }
+            start()
+
+            $(".prev").on("click", prev);
+            $(".next").on("click", next);
+        })
+        
+    </script>
+</head>
+<body>
+    <div data-theme="b">
+        <div data-role="page" id="home">
+            <div data-role="panel" id="menu-home" data-display="overlay" data-theme="b">
+                <a href="" data-role="button" data-icon="delete" data-iconpos="notext" data-rel="close"></a>
+                <hr>
+                <h1>메뉴</h1>
+                <ul data-role="listview">
+                    <li><a href="#home" style="background-color: #1c1c1c;">홈</a></li>
+                    <li><a href="#info">소개</a></li>
+                    <li><a href="#work">작품</a></li>
+                </ul>
+            </div>
+            <div data-role="header" data-theme="b" data-position="fixed" data-fullscreen="true" class="header">
+                <!-- <input type="button" value="" data-icon="bullets" data-iconpos="notext"> -->
+                <a href="#menu-home"><input type="button" value="" data-icon="bullets" data-iconpos="notext"></a>
+                <h1>AI 동아리 소개</h1>
+            </div>
+            <div data-role="content">
+                <div id="content">
+                    <h1>AI 동아리</h1>
+                    <a href="#info"><button id="info-btn">자세히 알아보기</button></a>
+                </div>
+            </div>
+            <div data-role="footer" data-position="fixed" data-fullscreen="true" data-theme="b">
+                <div data-role="navbar">
+                    <ul>
+                        <li><a href="#home" data-icon="home" class="ui-btn-active ui-state-persist">홈</a></li>
+                        <li><a href="#info" data-icon="info">소개</a></li>
+                        <li><a href="#work" data-icon="cloud">작품</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div data-role="page" id="info">
+            <div data-role="panel" id="menu-info" data-display="overlay" data-theme="b">
+                <a href="" data-role="button" data-icon="delete" data-iconpos="notext" data-rel="close"></a>
+                <hr>
+                <h1>메뉴</h1>
+                <ul data-role="listview">
+                    <li><a href="#home">홈</a></li>
+                    <li><a href="#info" style="background-color: #1c1c1c;">소개</a></li>
+                    <li><a href="#work">작품</a></li>
+                </ul>
+            </div>
+
+            <div data-role="header" data-theme="b" data-position="fixed" data-fullscreen="true" class="header">
+                <!-- <input type="button" value="" data-icon="bullets" data-iconpos="notext"> -->
+                <a href="#menu-info"><input type="button" value="" data-icon="bullets" data-iconpos="notext"></a>
+                <h1>AI 동아리 소개</h1>
+            </div>
+            <div data-role="content">
+				<div class="embed-container" style="">
+					<iframe width="560" height="315" src="https://www.youtube.com/embed/52-YinYlRSw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+				</div>
+			    <div id="info-content" data-role="collapsible-set" data-content-theme="e">
+                    <div data-role="collapsible" data-collapsed="false">
+                        <h3>AI 동아리란?</h3>
+                        <p>컴퓨터소프트웨어과에서 지원하는 동아리로<br>주로 인공지능을 통해 문제해결 방법을 연구하는 동아리입니다</p>
+                    </div>
+                    <div data-role="collapsible">
+                        <h3>위치</h3>
+                        <p>미래관 703-1호<br>미래관 607호</p>
+                    </div>
+                    <div data-role="collapsible" >
+                        <h3>608호</h3>
+                        <p><img src="img/607.jpg"></p>
+                    </div>
+                    <div data-role="collapsible" >
+                        <h3>703-1호</h3>
+                        <p><img src="img/index.png"></p>
+                    </div>
+                </div>
+            </div>
+            <div data-role="footer" data-position="fixed" data-fullscreen="true" data-theme="b">
+                <div data-role="navbar">
+                    <ul>
+                        <li><a href="#home" data-icon="home">홈</a></li>
+                        <li><a href="#info" data-icon="info" class="ui-btn-active ui-state-persist">소개</a></li>
+                        <li><a href="#work" data-icon="cloud">작품</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div data-role="page" id="work">
+            <div data-role="panel" id="menu-work" data-display="overlay" data-theme="b">
+                <a href="" data-role="button" data-icon="delete" data-iconpos="notext" data-rel="close"></a>
+                <hr>
+                <h1>메뉴</h1>
+                <ul data-role="listview">
+                    <li><a href="#home">홈</a></li>
+                    <li><a href="#info">소개</a></li>
+                    <li><a href="#work" style="background-color: #1c1c1c;">작품</a></li>
+                </ul>
+            </div>
+            <div data-role="header" data-theme="b" data-position="fixed" data-fullscreen="true" class="header">
+                <!-- <input type="button" value="" data-icon="bullets" data-iconpos="notext"> -->
+                <a href="#menu-work"><input type="button" value="" data-icon="bullets" data-iconpos="notext"></a>
+                <h1>AI 동아리 작품</h1>
+            </div>
+            <div data-role="content" style="margin: 0;">
+                <div style="margin: 0;">
+                    <div id="indexBtn" style="height: 4rem; margin: 0;">
+                        <input class="index-radio" type="radio" name="index" data-role="none" checked="checked">
+                        <input class="index-radio" type="radio" name="index" data-role="none">
+                        <input class="index-radio" type="radio" name="index" data-role="none">
+                        <input class="index-radio" type="radio" name="index" data-role="none">
+                        <input class="index-radio" type="radio" name="index" data-role="none">
+                    </div>
+                    <button class="prev move-btn" data-icon="carat-l" data-inline="true" data-iconpos="notext" style="width: 4rem; top: 4rem; margin: 0; background-color: #00000021;"></button>
+                    <div class=imgBox>
+                        <img class="img on" src="img/work/img1.png" alt="">
+                        <img class="img" src="img/work/img2.JPG" alt="">
+                        <img class="img" src="img/work/img3.JPG" alt="">
+                        <img class="img" src="img/work/img4.JPG" alt="">
+                        <img class="img" src="img/work/img5.png" alt="">
+                    </div>
+                    <button class="next move-btn" data-icon="carat-r" data-inline="true" data-iconpos="notext" style="width: 4rem; top: 4rem; margin: 0; right: 0; background-color: #00000021;"></button>
+                </div>
+            </div>
+            <div data-role="footer" data-position="fixed" data-fullscreen="true" data-theme="b">
+                <div data-role="navbar">
+                    <ul>
+                        <li><a href="#home" data-icon="home">홈</a></li>
+                        <li><a href="#info" data-icon="info">소개</a></li>
+                        <li><a href="#work" data-icon="cloud" class="ui-btn-active ui-state-persist">작품</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+  <script>
+ </script>
+</body>
+</html>
